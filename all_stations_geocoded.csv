@@ -1,0 +1,79 @@
+Nom_Station;Adresse;Type;Contact_Principal;RedChef;RedChefAdj;RespProg;RespTech;Latitude;Longitude;Territoire
+ici Alsace - Strasbourg;4, rue Joseph Massol - 67000 STRASBOURG;ICI;Céline  06 73 87 19 22;Maud CZAJA 06 76 46 34 29;Magali FICHTER;Lionel 06 60 65 06 65 ;Frédéric 06-72-21-29-23;48.5853248;7.7551832;Nord-Est
+ici Armorique - Rennes;14, av Jean Janvier - 35000 Rennes;ICI;Sophie 06 14 27 04 10;Céline GUETAZ 06 88 89 29 55;Loick GUELLEC;Gael  06 50 47 93 43;Laurent  06 18 42 20 59;48.1044646;-1.6719152;Nord-Ouest
+ici Auxerre;12, place Saint Amâtre - BP 101 - 89002 AUXERRE Cedex;ICI;Valérie  06 81 61 22 49;Delphine MARTIN #REF!;Leni Flouvat (intérim);Eric 06 76 46 90 54;Maud 07 64 76 89 36;47.7897348;3.5650583;Centre-Est
+ici Azur - Nice;2, place Grimaldi - BP704 - 06012 Nice cedex 1;ICI;0 0    ;Caroline SAGLIONE (intérim) 06 09 42 84 32;Violaine ILL;Julien 06 61 33 60 68;XXXX XXXX;43.6977461;7.2651668;Sud-Med
+ici Béarn-Bigorre - Pau;5, place Clémenceau - 64 000 Pau ;ICI;Franck 06 22 70 19 50;Daniel CORSAND 06 78 64 37 31;Yannick DAMONT;Eric 7 20 68 05 87;Jérémy 06-58-67-63-75;43.2951755;-0.3690781;Centre-Sud-Ouest
+ici Belfort-Montbéliard;10, rue des capucins  90000 Belfort;ICI;Stéphane  06 25 04 75 09;Nicolas WILHELM 06 16 11 45 26;Nicolas JOLY;Vincent  8 20 68 05 87;Emmanuel 06-83-44-95-77;47.6358878;6.8557737;Nord-Est
+ici Berry - Chateauroux;10, rue de la république - 36 000 Chateauroux;ICI;Christian  06 22 06 35 22;Carl DECHATRE 06 63 12 29 78;Gaëlle FONTENIT;Rodolphe 06 18 49 60 58;Olivier 06-85-23-86-05;46.810183;1.690463;Centre
+ici Besançon;2, place Granvelle - BP 591 - 25027 BESANCON Cedex;ICI;Bruno  06 60 88 74 44;Marie-Coralie FOURNIER 06 14 83 66 83;Cédric LIETO;Thomas  0;Sarah 06 07 62 38 82;47.2354849;6.0269274;Centre-Est
+ici Bourgogne - Dijon;29, rue Guillaume Telle - 21000 Dijon;ICI;Laurent  06 14 89 50 36;Anne OGER-CANIER 06.24.40.44.80;Arnaud RACAPE;Raffaelo MARSEGLIA;David  06-21-64-67-15;47.3215806;5.0414701;Centre-Est
+ici Breizh Izel - Quimper;155 boulevard de Creac’h Gwenn, 29000 Quimper;ICI;Gurvan  06 73 66 18 67;Baptiste SCHWEITZER 06 85 50 51 66;Typhaine MORIN;Chrystelle 06 18 76 29 86;Yann 06 08 92 74 46;47.9773645;-4.1017427;Nord-Ouest
+ici Champagne-Ardenne - Reims;28, Bd M. Joffre - BP 1094 - 51054 REIMS Cedex;ICI;Tony 06 03 87 76 30;Sylvie BASSAL 06 08 31 70 95;Soline DEMESTRE;Gilles 07 61 80 60 72;Fabien 06 20 72 47 32;49.2577886;4.031926;Nord-Est
+ici Cotentin* - Cherbourg;Hôtel Atlantique - Impasse Piedagniel - 50100 CHERBOURG;ICI;Jérôme 06 62 99 09 20;Juliette LEMEUNIER 06 16 34 32 61;Benoit MARTIN;Stéphanie 06 11 01 29 07;Paul  06-07-78-91-44;49.5127198;-1.5755441;Nord-Ouest
+ici Creuse - Guéret;7 av de la république 23000 Guéret;ICI;Franky 07 85 73 42 67;Sophie PERETTI 06 17 02 09 01;Valérie MENUT;Xavier 06 21 44 55 90;Valentin 06 99 29 10 29;46.16995;1.87207;Centre
+ici Drôme Ardèche - Valence;Pôle Latour Maubourg-70 av. de Romans - 26000 VALENCE;ICI;Florence 06 83 43 94 42;Damien TRIOMPHE (intérim) 07 76 58 92 19;0;Vincent  06 08 57 80 34;Stéphane  06 70 00 39 81;44.9332277;4.8920811;Centre-Est
+ici Gard Lozère - Nîmes;10, boulevard des arènes - 30020 Nimes cedex 1;ICI;Marie-Audrey 06 60 74 38 52;Tony SELLIEZ 06 27 74 42 49;Hervé SALLAFRANQUE;Félicien  06 08 78 22 75;Laurie 06 17 93 32 13;43.8344429;4.3585697;Sud-Med
+ici Gascogne - Mont de Marsan;13, place Jean Jaurès BP289 - 40 005 Mont-de-Marsan;ICI;Grégoire 06 21 61 01 71;Eric BALLANGER  06 74 41 92 02;Renaud BIONDY-MAUGEY;Sabine 06 24 48 31 46;Olivier  06 65 70 02 79;43.8872763;-0.5004501;Centre-Sud-Ouest
+ici Gironde - Bordeaux;91, rue Nuyens - 33100 Bordeaux;ICI;Jean-Marc 06 84 63 78 87;Yves MAUGUE 06 72 95 45 88;Stéphanie BROSSARD;Anthony  06 19 85 09 48;Christophe  06-62-99-13-17;44.842977;-0.5596741;Centre-Sud-Ouest
+ici Hérault - Montpellier;474, allée de Montmorency -34 034 Montpellier;ICI;Paul 06 83 86 00 31;Typhaine MORIN 06 61 46 74 11;Mathias KERN;Bertrand FISSOT;Aubert  06-22-95-70-27;43.6095995;3.8884509;Sud-Med
+ici Isère - Grenoble;27, av Félix Viallet - 38000 Grenoble;ICI;Jean-Lou 06 07 21 64 18;Lionel CARIOU 06 76 95 12 34;Véronique PUEYO;Philippe  07 78 63 19 30;Alice 07 64 46 38 49;45.1907364;5.718973;Centre-Est
+ici La Rochelle;5, avenue Michel Crépeau - 17036 La Rochelle Cedex 1;ICI;Grégory 06 12 89 76 00;Mélanie DOMANGE 06 60 37 73 95;Eric LE BIHAN;Alain 613013112;Samuel 06-26-59-76-81;46.1536098;-1.1526743;Centre-Sud-Ouest
+ici Limousin - Limoges;23, bld Gambetta 87 000 Limoges;ICI;Grégory 06 21 75 21 37;Jérôme EDANT 06 75 58 75 65;Valérie MOSNIER;Vincent  06 98 13 11 87;Jean-Baptiste 06 70 72 18 53;45.8354243;1.2644847;Centre
+ici Loire Océan - Nantes;2 bis quai François Mitterand 44 000 Nantes;ICI;Philippe  06 20 42 90 19;Pascal ROCHE 06 78 46 30 97;Marion FERSING;Luc HUMBERT;Stéphane 06-11-71-63-01;47.2186371;-1.5541362;Nord-Ouest
+ici Lorraine Nord - Metz;5, rue d'Australie - 57000 Metz;ICI;Annaïg 06 74 23 24 66;Fanette HOURT 06 66 46 22 09;Bastien MUNCH;Patrick 06 14 60 55 32;Catherine  06 03 60 13 48;49.1196964;6.1763552;Nord-Est
+ici Maine - Le Mans;17, av. Pierre Mendès France 72 000 Le Mans;ICI;Patrick  06 08 73 93 39;Julie LE DUFF  06 17 81 17 55;Julien JEAN;#REF! #REF!;Julien 06 25 29 05 35;48.0064263;0.199757;Nord-Ouest
+ici Mayenne - Laval;41, av. Robert Buron - 53 000 Laval;ICI;Delphine 06 88 55 35 25;Germain TREILLE 06 25 03 88 81;Martin COTTA;Eva 06 20 42 12 96 ;Clémence 06-13-60-69-46;48.0730801;-0.7641037;Nord-Ouest
+ici Nord - Lille;507, av. du Président Hoover - 59000 Lille;ICI;Bertrand  06 12 30 46 75;Antoine BAREGE 06 14 03 24 78;Stéphane BARBEREAU;Sophie 06 84 79 45 36;Yohann 06 25 27 40 03;50.6309777;3.0776763;Nord-Est
+ici Normandie* - Calvados et Orne;12, rue Rosa Parks - 14000 Caen;ICI;Julien 06 75 66 20 80;Stéphanie BROSSARD 06 35 11 50 73;Philippe THOMAS;Pascal 06 23 87 68 78;Antoine 07.77.79.45.58;49.1784098;-0.3485761;Nord-Ouest
+ici Normandie* - Seine-Maritime et Eure;Hangar A - Quai Boisguilbert - 76 000 Rouen;ICI;Pierre 06 07 34 40 05;Raphaël TUAL 06 98 69 15 68;Charlotte COUTARD;Laurent 06 11 63 01 62;Sophie 06 60 12 03 75;49.4429765;1.0741309;Nord-Ouest
+ici Occitanie;78, allée Jean Jaurès - 31000 Toulouse;ICI;Bruce  06 11 50 52 40;Sandrine MORIN 06 10 29 47 26;Bénédicte DUPONT;Anthony  06 75 09 98 23;Vincent 06 87 15 86 46;43.6444525;1.5208073;Sud-Med
+ici Orléans;5, place du Châtelet 45 000 Orléans;ICI;Philippe  06 80 43 13 92;Camille HUPPENOIRE 06 88 77 95 10;A VENIR;Bill 06 11 10 10 29;Abdelbasset 33612484154;47.8983882;1.9057688;Centre
+ici Paris ;116 avenue du Président Kennedy, 75016 Paris;ICI;Sébastien 06 27 08 42 82;Nasser MADJI (chef des infos) 06 46 85 14 45;0;Elsa 06 12 90 96 04;Paul-Henri 06 98 55 65 23;48.853;2.278;Paris
+ici Pays Basque - Bayonne;46, allée Marines 64116 Bayonne cedex;ICI;Ttotte 06 26 15 86 66;Odile FAURE 06 58 41 64 37;Bixente VRIGNON;Jean-Luc  06 87 42 77 71;Pascal 06 69 78 34 31;43.5007947;-1.4829942;Centre-Sud-Ouest
+ici Pays d'Auvergne - Clermont-Ferrand;80, bld François Mitterrand 63 000 Clermont-Ferrand;ICI;Philippe  06 20 62 23 96;Olivier VIDAL 06 22 53 53 12;Emmanuel MOREAU;RABIA 06 18 66 13 55;Stéphane  06-34-99-46-87;45.7774551;3.0819427;Centre
+ici Pays de Savoie - Chambéry;256, rue de la République - 73 000 Chambéry;ICI;Hervé  06 17 01 22 41;Jonathan LANDAIS 06 33 29 52 59;Tommy CATANEO;Thierry  06 27 28 93 18;Guillaume 06 50 88 83 67;45.563875;5.9257427;Centre-Est
+ici Périgord - Périgueux;1 cours Saint Georges - 24 003 Périgeux;ICI;Henri 06 80 34 00 28;Marie-Sylvie PRUDHOMME 06 84 78 56 92;Charlotte JOUSSERAND;Cléo 06 10 95 69 74;Lionel 06-27-89-49-32;45.1840214;0.7160392;Centre-Sud-Ouest
+ici Picardie - Amiens;2 rue Maréchal de Lattre de Tassigny - 80 000 Amiens;ICI;Henrique 06 82 68 01 02;Axelle LABBE 06 83 36 71 15;Pierre-Antoine LEFORT (intérim);Jérôme 06 17 35 84 01;Luca 06 18 79 56 01;49.8923688;2.2921606;Nord-Est
+ici Poitou - Poitiers;313, av. de Nantes 86 000 Poitiers;ICI;Régis 07 77 91 24 01;Vincent HULIN 06 16 22 04 48;William GIRAUD ;Nathalie 06 11 20 18 14;Marie-Ange 06-08-31-70-88;46.592899;0.3281556;Centre-Sud-Ouest
+ici Provence - Aix en Provence;560, av. Mozart 13617 Aix en Provence cedex 1;ICI;Eric 06 14 27 85 63;Nelly ASSENAT 06 09 10 58 16;Rémi INK;Fabien  06 95 42 08 16;Pascal 06 72 00 19 41;43.5252278;5.4408993;Sud-Med
+ici R.C.Fréquenza Mora - Bastia;4, rue Favalelli - BP 130 - 20289 Bastia;ICI;Rose  0    ;Patrick ROSSI 06 09 04 54 40;Didier ARNOUX;Frédéric 06 17 45 19 96;Serge 06 15 80 42 88;42.6965973;9.4471027;Sud-Med
+ici Roussillon - Perpignan;24, av. du Général Leclerc 66 000 Perpignan;ICI;Christine 06 08 37 68 04;Stéphanie MORA 06 80 88 40 76;François DAVID;Maël  06 01 48 12 38;Stéphane 06-12-25-65-37;42.6985304;2.8953121;Sud-Med
+ici Saint Etienne Loire;5, rue Pablo Picasso - 42000 SAINT-ETIENNE;ICI;Hervé  06 78 77 19 69;Véronique NARBOUX 06 35 28 02 71;Mathilde MONTAGNON;Marie 06 19 89 33 29;Adrien 06 07 72 08 72;45.4496959;4.3871982;Centre-Est
+ici Sud Lorraine - Nancy;21, Bd du Recteur Senn - 54042 NANCY Cedex;ICI;Nathalie 06 25 16 10 96;Clément LHUILLIER 06 22 34 75 45;Mohand CHIBANI;Julien 06 03 63 02 19;Nicolas  06-75-22-12-24;48.682614;6.1855532;Nord-Est
+ici Touraine - Tours;40, rue James Watt 37 200 Tours;ICI;Yohann 06 84 78 30 52;David MALLE 06 63 80 07 87;Romain DEZEQUE;Eddy 06 64 50 93 16;Stéphane  06-26-83-72-50;47.3640812;0.6803352;Centre
+ici Vaucluse - Avignon;25, rue de la République - BP 320 - 84021 Avignon Cedex;ICI;Valerie 06 72 70 84 79;Camille LABROUSSE 06 63 40 64 52;Romain BERCHET;Christophe  06 03 15 31 84;Axel  06-20-72-47-31;43.947152;4.805926;Sud-Med
+RER EPINAL;Mairie de EPINAL;RER;COLIN Thierry;;;;;48.1747684;6.4503643;RER
+RER TULLE;Mairie de TULLE;RER;GRAZIANI Philippe;;;;;45.2678347;1.7706797;RER
+RER EVREUX;Mairie de EVREUX;RER;PHILIPPOT Laurent;;;;;49.0268903;1.1510164;RER
+RER ANNECY;Mairie de ANNECY;RER;VIVION Richard;;;;;45.8992348;6.1288847;RER
+RER ARRAS;Mairie de ARRAS;RER;LAMARRE VANESSA;;;;;50.291048;2.7772211;RER
+RER BÉZIERS;Mairie de BÉZIERS;RER;POCHER STEPHANE;;;;;43.3426562;3.2131307;RER
+RER TOULON;Mairie de TOULON;RER;GLOTIN WININGER Sophie;;;;;43.1257311;5.9304919;RER
+RER ANGOULÈME;Mairie de ANGOULÈME;RER;MARSAT Pierre;;;;;45.6484505;0.1561947;RER
+RER MULHOUSE;Mairie de MULHOUSE;RER;GENTHON Patrick;;;;;47.7467233;7.3389937;RER
+RER ALÈS;Mairie de ALÈS;RER;LABASTROU Ludovic;;;;;44.1253665;4.0852818;RER
+RER VANNES;Mairie de VANNES;RER;COLAS Frederick;;;;;47.6586772;-2.7599079;RER
+RER BOURGES;Mairie de BOURGES;RER;BENOIT Michel;;;;;47.0811658;2.399125;RER
+RER VESOUL;Mairie de VESOUL;RER;FERNANDEZ JEAN FRANCOIS;;;;;47.6197395;6.1544694;RER
+RER ANNECY;Mairie de ANNECY;RER;AMELINE Marie;;;;;45.8992348;6.1288847;RER
+RER AUBENAS;Mairie de AUBENAS;RER;PLUVY PIERRE JEAN;;;;;44.6205476;4.3902399;RER
+RER TOULON;Mairie de TOULON;RER;MARQUES DE OLIVEIRA Christelle;;;;;43.1257311;5.9304919;RER
+RER CALAIS;Mairie de CALAIS;RER;DARRIET Matthieu;;;;;50.9524769;1.8538446;RER
+RER COLMAR;Mairie de COLMAR;RER;CHHUM Guillaume;;;;;48.0777517;7.3579641;RER
+RER LA ROCHE SUR YON;Mairie de LA ROCHE SUR YON;RER;TAPON YVES-RENE;;;;;46.6705431;-1.4269698;RER
+RER ARCACHON;Mairie de ARCACHON;RER;HISCOCK Stephane;;;;;44.6616428;-1.1700018;RER
+RER SAINT-NAZAIRE;Mairie de SAINT-NAZAIRE;RER;ROUSSEL Helene;;;;;47.2733517;-2.2138905;RER
+RER SAINT-BRIEUC;Mairie de SAINT-BRIEUC;RER;MOISON JOHAN;;;;;48.5141134;-2.7603283;RER
+RER BREST;Mairie de BREST;RER;OLIVIER NICOLAS;;;;;48.3905283;-4.4860088;RER
+RER MENDE;Mairie de MENDE;RER;MAKHLOUFI SAID;;;;;44.5180226;3.4991057;RER
+RER LE HAVRE;Mairie de LE HAVRE;RER;BONTE Amélie;;;;;49.4938975;0.1079732;RER
+RER DAX;Mairie de DAX;RER;FERRIER Paul;;;;;43.7084065;-1.0518771;RER
+RER MONTBÉLIARD;Mairie de MONTBÉLIARD;RER;JAFFRELOT Dylan;;;;;47.5102368;6.7977564;RER
+RER VALENCIENNES;Mairie de VALENCIENNES;RER;PROUVOYEUR JULIEN;;;;;50.3579317;3.5234846;RER
+RER BOURGOIN;Mairie de BOURGOIN;RER;BALLANDRA Antoine;;;;;45.5860438;5.2772265;RER
+RER NIORT;;RER;;;;;;46.3231;-0.4597;RER
+Bureau AJACCIO;;Bureau;Bureau Ajaccio;;;;;41.9438;8.83;Bureau
+Bureau LYON;;Bureau;Bureau Lyon;;;;;45.7721;4.8504;Bureau
+Bureau MARSEILLE;;Bureau;Bureau Marseille;;;;;43.431;5.4214;Bureau
+RER SENS;;RER;Renaud Candelier;;;;;48.1956;3.2831;RER

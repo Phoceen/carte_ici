@@ -1,10 +1,10 @@
 import pandas as pd
 import folium
 from folium import FeatureGroup
+from folium.plugins import Search, Geocoder
 import json
 import math
 import re
-from folium.plugins import Search
 import branca
 
 # Fonction pour retirer les numéros de téléphone
@@ -63,14 +63,66 @@ with open('isochrones_120min.geojson', 'r') as f:
 print("📍 Création de la carte avec contrôles par station...")
 
 COLORS = {
-    'Nord-Est': '#e41a1c',
-    'Nord-Ouest': '#377eb8',
+    'Nord Est': '#e41a1c',
+    'Nord Ouest': '#377eb8',
     'Centre': '#4daf4a',
-    'Centre-Est': '#984ea3',
-    'Centre-Sud-Ouest': '#ff7f00',
-    'Sud-Med': '#f0e130',
+    'Est du Sud': '#984ea3',
+    'Sud Ouest': '#ff7f00',
+    'Sud Med': '#f0e130',
     'Paris': '#a65628',
     'RER': '#999999'
+}
+
+# Correspondance entre les anciens noms (dans le CSV) et les nouveaux noms
+TERRITOIRE_MAPPING = {
+    'Nord-Est': 'Nord Est',
+    'Nord-Ouest': 'Nord Ouest',
+    'Centre': 'Centre',
+    'Centre-Est': 'Est du Sud',
+    'Centre-Sud-Ouest': 'Sud Ouest',
+    'Sud-Med': 'Sud Med',
+    'Paris': 'Paris',
+    'RER': 'RER'
+}
+
+# Mapping des RER vers leur territoire de rattachement
+RER_TERRITOIRE_MAPPING = {
+    'RER EPINAL': 'Nord Est',
+    'RER TULLE': 'Centre',
+    'RER EVREUX': 'Nord Ouest',
+    'RER ANNECY': 'Est du Sud',
+    'RER ARRAS': 'Nord Est',
+    'RER BÉZIERS': 'Sud Med',
+    'RER TOULON': 'Sud Med',
+    'RER ANGOULÈME': 'Sud Ouest',
+    'RER MULHOUSE': 'Nord Est',
+    'RER ALÈS': 'Sud Med',
+    'RER VANNES': 'Nord Ouest',
+    'RER BOURGES': 'Centre',
+    'RER VESOUL': 'Est du Sud',
+    'RER AUBENAS': 'Est du Sud',
+    'RER CALAIS': 'Nord Est',
+    'RER COLMAR': 'Nord Est',
+    'RER LA ROCHE SUR YON': 'Nord Ouest',
+    'RER ARCACHON': 'Sud Ouest',
+    'RER SAINT-NAZAIRE': 'Nord Ouest',
+    'RER SAINT-BRIEUC': 'Nord Ouest',
+    'RER BREST': 'Nord Ouest',
+    'RER MENDE': 'Sud Med',
+    'RER LE HAVRE': 'Nord Ouest',
+    'RER DAX': 'Sud Ouest',
+    'RER MONTBÉLIARD': 'Nord Est',
+    'RER VALENCIENNES': 'Nord Est',
+    'RER BOURGOIN': 'Est du Sud',
+    'RER NIORT': 'Sud Ouest',
+    'RER SENS': 'Est du Sud'
+}
+
+# Mapping des Bureaux vers leur territoire de rattachement
+BUREAU_TERRITOIRE_MAPPING = {
+    'Bureau LYON': 'Est du Sud',
+    'Bureau MARSEILLE': 'Sud Med',
+    'Bureau AJACCIO': 'Sud Med'
 }
 
 STYLES = {
@@ -98,26 +150,65 @@ def get_polygon_center(coords):
 def find_nearest_station(lat, lon, df):
     min_dist = float('inf')
     nearest = None
+    MAX_DISTANCE = 0.5  # Distance maximale en degrés (environ 50km)
+    
     for idx, row in df.iterrows():
         dist = math.sqrt((row['Latitude'] - lat)**2 + (row['Longitude'] - lon)**2)
-        if dist < min_dist:
+        if dist < min_dist and dist < MAX_DISTANCE:
             min_dist = dist
             nearest = row['Nom_Station']
+    
     return nearest
 
 print("   Association des isochrones 30min aux stations...")
-for feature in iso_30['features']:
-    coords = feature['geometry']['coordinates'][0]
-    center_lat, center_lon = get_polygon_center(coords)
-    station = find_nearest_station(center_lat, center_lon, df)
-    feature['properties']['station'] = station
+excluded_30 = 0
+for i, feature in enumerate(iso_30['features']):
+    try:
+        geom = feature['geometry']
+        if geom['type'] == 'Polygon':
+            coords = geom['coordinates'][0]
+        elif geom['type'] == 'MultiPolygon':
+            coords = geom['coordinates'][0][0]
+        else:
+            print(f"   Type de géométrie non supporté: {geom['type']}")
+            continue
+        
+        center_lat, center_lon = get_polygon_center(coords)
+        station = find_nearest_station(center_lat, center_lon, df)
+        if station:
+            feature['properties']['station'] = station
+        else:
+            feature['properties']['station'] = 'EXCLUDE'
+            excluded_30 += 1
+    except Exception as e:
+        print(f"   Erreur avec feature {i}: {e}")
+        print(f"   Feature: {type(feature)}")
+        if isinstance(feature, dict):
+            print(f"   Keys: {feature.keys()}")
+        continue
 
 print("   Association des isochrones 60min aux stations...")
+excluded_60 = 0
 for feature in iso_60['features']:
-    coords = feature['geometry']['coordinates'][0]
+    geom = feature['geometry']
+    if geom['type'] == 'Polygon':
+        coords = geom['coordinates'][0]
+    elif geom['type'] == 'MultiPolygon':
+        coords = geom['coordinates'][0][0]
+    else:
+        print(f"   Type de géométrie non supporté: {geom['type']}")
+        continue
+    
     center_lat, center_lon = get_polygon_center(coords)
     station = find_nearest_station(center_lat, center_lon, df)
-    feature['properties']['station'] = station
+    if station:
+        feature['properties']['station'] = station
+    else:
+        feature['properties']['station'] = 'EXCLUDE'
+        excluded_60 += 1
+
+if excluded_30 > 0 or excluded_60 > 0:
+    print(f"   ⚠️  {excluded_30} isochrones 30min et {excluded_60} isochrones 60min exclus (trop éloignés des stations)")
 
 # Créer des dictionnaires d'isochrones par station
 iso_by_station = {}
@@ -126,36 +217,58 @@ for station in df['Nom_Station'].tolist():
 
 for feature in iso_30['features']:
     station = feature['properties'].get('station', '')
-    if station in iso_by_station:
+    if station in iso_by_station and station != 'EXCLUDE':
         iso_by_station[station]['30'].append(feature)
 
 for feature in iso_60['features']:
     station = feature['properties'].get('station', '')
-    if station in iso_by_station:
+    if station in iso_by_station and station != 'EXCLUDE':
         iso_by_station[station]['60'].append(feature)
 
 for feature in iso_90['features']:
     station = feature['properties'].get('station', '')
-    if station in iso_by_station:
+    if station in iso_by_station and station != 'EXCLUDE':
         iso_by_station[station]['90'].append(feature)
 
 for feature in iso_120['features']:
     station = feature['properties'].get('station', '')
-    if station in iso_by_station:
+    if station in iso_by_station and station != 'EXCLUDE':
         iso_by_station[station]['120'].append(feature)
 
-# Créer la carte avec des contrôles améliorés
-m = folium.Map(location=[46.6, 2.5], zoom_start=6, tiles='cartodbpositron')
+# Créer la carte avec des contrôles par durée
+m = folium.Map(location=[46.6, 2.5], zoom_start=6, tiles=None)
 
-# Organiser les données par territoire et durée pour un meilleur contrôle
-territoire_groups = {}
-for territoire in COLORS.keys():
-    territoire_groups[territoire] = {}
-    for duration in ['30', '60', '90', '120']:
-        territoire_groups[territoire][duration] = FeatureGroup(
-            name=f'{territoire} - {DURATION_LABELS[duration]}', 
-            show=(duration in ['30', '60'])  # Afficher seulement 30min et 1h par défaut
-        )
+# Ajouter le tile layer avec un nom personnalisé
+folium.TileLayer(
+    tiles='cartodbpositron',
+    name='🎛️ Zones',
+    control=True
+).add_to(m)
+
+# Organiser les données par durée pour un contrôle simplifié
+# Groupe pour les stations ICI
+ici_duration_groups = {}
+for duration in ['30', '60', '90', '120']:
+    ici_duration_groups[duration] = FeatureGroup(
+        name=f'🎯 Stations ICI - {DURATION_LABELS[duration]}', 
+        show=(duration in ['30', '60'])  # Afficher seulement 30min et 1h par défaut
+    )
+
+# Groupe séparé pour les RER par durée
+rer_duration_groups = {}
+for duration in ['30', '60', '90', '120']:
+    rer_duration_groups[duration] = FeatureGroup(
+        name=f'📻 RER - {DURATION_LABELS[duration]}', 
+        show=(duration in ['30', '60'])  # Afficher seulement 30min et 1h par défaut
+    )
+
+# Groupe séparé pour les Bureaux par durée
+bureau_duration_groups = {}
+for duration in ['30', '60', '90', '120']:
+    bureau_duration_groups[duration] = FeatureGroup(
+        name=f'🏢 Bureaux - {DURATION_LABELS[duration]}', 
+        show=(duration in ['30', '60'])  # Afficher seulement 30min et 1h par défaut
+    )
 
 # Trier les stations par territoire puis par nom
 df_sorted = df.sort_values(['Territoire', 'Nom_Station'])
@@ -165,8 +278,23 @@ station_data = {}  # Pour stocker les infos des stations
 
 for idx, row in df_sorted.iterrows():
     station = row['Nom_Station']
-    territoire = row['Territoire']
-    color = COLORS.get(territoire, '#999999')
+    territoire_original = row['Territoire']
+    station_type = row['Type']
+    
+    # Déterminer le territoire de rattachement selon le type
+    if territoire_original == 'RER' or station_type == 'RER':
+        territoire = RER_TERRITOIRE_MAPPING.get(station, 'RER')
+        if territoire == 'RER':  # Si pas trouvé dans le mapping, garder RER
+            color = COLORS.get('RER', '#999999')
+        else:
+            color = COLORS.get(territoire, '#999999')
+    elif territoire_original == 'Bureau' or station_type == 'Bureau':
+        territoire = BUREAU_TERRITOIRE_MAPPING.get(station, 'Bureau')
+        color = COLORS.get(territoire, '#999999')
+    else:
+        territoire = TERRITOIRE_MAPPING.get(territoire_original, territoire_original)
+        color = COLORS.get(territoire, '#999999')
+    
     short_name = station.replace('ici ', '').replace('RER ', '')
     
     # Stocker les données de la station
@@ -200,7 +328,7 @@ for idx, row in df_sorted.iterrows():
             </div>
             """
             
-            # Ajouter à la carte avec interactivité
+            # Ajouter à la carte avec interactivité et survol amélioré
             geojson = folium.GeoJson(
                 feature,
                 style_function=lambda x, c=color, d=duration: {
@@ -213,22 +341,32 @@ for idx, row in df_sorted.iterrows():
                 },
                 highlight_function=lambda x, c=color, d=duration: {
                     'fillColor': c,
-                    'color': '#FF0000',
-                    'weight': STYLES[d]['weight'] + 2,
-                    'fillOpacity': min(STYLES[d]['fillOpacity'] + 0.3, 0.8),
-                    'dashArray': ''
+                    'color': '#FF4444',
+                    'weight': STYLES[d]['weight'] + 3,
+                    'fillOpacity': min(STYLES[d]['fillOpacity'] + 0.4, 0.9),
+                    'dashArray': None
                 },
-                tooltip=folium.Tooltip(tooltip_text, sticky=True),
+                tooltip=folium.Tooltip(
+                    tooltip_text, 
+                    sticky=True,
+                    style="background-color: white; color: black; font-family: arial; font-size: 12px; padding: 8px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"
+                ),
                 popup=folium.Popup(popup_html, max_width=250)
             )
             
-            # Ajouter au groupe approprié
-            geojson.add_to(territoire_groups[territoire][duration])
+            # Ajouter au groupe approprié selon le type de station
+            if territoire_original == 'RER' or station_type == 'RER':
+                geojson.add_to(rer_duration_groups[duration])
+            elif territoire_original == 'Bureau' or station_type == 'Bureau':
+                geojson.add_to(bureau_duration_groups[duration])
+            else:
+                geojson.add_to(ici_duration_groups[duration])
 
 # Ajouter tous les groupes à la carte
-for territoire in territoire_groups:
-    for duration in territoire_groups[territoire]:
-        territoire_groups[territoire][duration].add_to(m)
+for duration in ici_duration_groups:
+    ici_duration_groups[duration].add_to(m)
+    rer_duration_groups[duration].add_to(m)
+    bureau_duration_groups[duration].add_to(m)
 
 print("   ✅ Isochrones interactifs ajoutés")
 
@@ -236,24 +374,37 @@ print("   ✅ Isochrones interactifs ajoutés")
 # AJOUTER LES STATIONS avec contrôles avancés
 # ============================================
 
-# Groupe pour toutes les stations
-stations_group = FeatureGroup(name='📍 Toutes les stations', show=True)
+# Groupe pour toutes les stations ICI seulement (sans les RER et Bureaux)
+all_stations_group = FeatureGroup(name='📍 Positions stations ICI', show=True)
 
-# Créer un groupe de stations par territoire
-territory_station_groups = {}
-for territoire in COLORS.keys():
-    territory_station_groups[territoire] = FeatureGroup(
-        name=f'📍 Stations {territoire}', 
-        show=False  # Masquées par défaut
-    )
+# Groupe séparé pour les positions des RER
+rer_positions_group = FeatureGroup(name='📻 Positions RER', show=True)
+
+# Groupe séparé pour les positions des Bureaux
+bureau_positions_group = FeatureGroup(name='🏢 Positions Bureaux', show=True)
 
 for idx, row in df_sorted.iterrows():
     station = row['Nom_Station']
-    territoire = row['Territoire']
-    color = COLORS.get(territoire, '#999999')
+    territoire_original = row['Territoire']
+    station_type = row['Type']
+    
+    # Déterminer le territoire de rattachement selon le type
+    if territoire_original == 'RER' or station_type == 'RER':
+        territoire = RER_TERRITOIRE_MAPPING.get(station, 'RER')
+        if territoire == 'RER':  # Si pas trouvé dans le mapping, garder RER
+            color = COLORS.get('RER', '#999999')
+        else:
+            color = COLORS.get(territoire, '#999999')
+    elif territoire_original == 'Bureau' or station_type == 'Bureau':
+        territoire = BUREAU_TERRITOIRE_MAPPING.get(station, 'Bureau')
+        color = COLORS.get(territoire, '#999999')
+    else:
+        territoire = TERRITOIRE_MAPPING.get(territoire_original, territoire_original)
+        color = COLORS.get(territoire, '#999999')
+    
     short_name = station.replace('ici ', '').replace('RER ', '')
     
-    if row['Type'] == 'ICI':
+    if station_type == 'ICI':
         popup_html = f"""
         <div style="width:280px">
             <h4 style="margin:0 0 10px 0; color:{color}; text-align:center;">{row['Nom_Station']}</h4>
@@ -275,7 +426,7 @@ for idx, row in df_sorted.iterrows():
             </div>
         </div>
         """
-    else:
+    elif station_type == 'RER':
         popup_html = f"""
         <div style="width:250px">
             <h4 style="margin:0 0 10px 0; color:{color}; text-align:center;">{row['Nom_Station']}</h4>
@@ -291,118 +442,263 @@ for idx, row in df_sorted.iterrows():
             </div>
         </div>
         """
+    else:  # Bureau
+        popup_html = f"""
+        <div style="width:250px">
+            <h4 style="margin:0 0 10px 0; color:{color}; text-align:center;">{row['Nom_Station']}</h4>
+            <div style="background:#f8f9fa; padding:10px; border-radius:5px; margin-bottom:10px;">
+                <b>🏢 Territoire:</b> {territoire}<br>
+                <b>🏢 Type:</b> Bureau
+            </div>
+            <hr style="margin:10px 0">
+            <b>📞 Contact:</b> {remove_phone(row['Contact_Principal'])}
+            <hr style="margin:10px 0">
+            <div style="text-align:center; font-size:11px; color:#666;">
+                <i>💡 Survolez les zones colorées pour voir les isochrones</i>
+            </div>
+        </div>
+        """
     
-    # Contour blanc plus visible
-    folium.CircleMarker(
-        location=[row['Latitude'], row['Longitude']],
-        radius=12,
-        color='white',
-        fill=True,
-        fillColor='white',
-        fillOpacity=1,
-        weight=0
-    ).add_to(stations_group)
-    
-    # Point coloré avec animation au survol
-    marker = folium.CircleMarker(
-        location=[row['Latitude'], row['Longitude']],
-        radius=10,
-        popup=folium.Popup(popup_html, max_width=320),
-        tooltip=folium.Tooltip(
-            f"<b>{short_name}</b><br>{territoire}<br><i>Cliquez pour plus d'infos</i>",
-            sticky=True
-        ),
-        color='white',
-        fill=True,
-        fillColor=color,
-        fillOpacity=0.9,
-        weight=3
-    )
-    marker.add_to(stations_group)
-    
-    # Aussi ajouter à l'autre groupe territorial
-    folium.CircleMarker(
-        location=[row['Latitude'], row['Longitude']],
-        radius=12,
-        color='white',
-        fill=True,
-        fillColor='white',
-        fillOpacity=1,
-        weight=0
-    ).add_to(territory_station_groups[territoire])
-    
-    folium.CircleMarker(
-        location=[row['Latitude'], row['Longitude']],
-        radius=10,
-        popup=folium.Popup(popup_html, max_width=320),
-        tooltip=folium.Tooltip(f"<b>{short_name}</b><br>{territoire}"),
-        color='white',
-        fill=True,
-        fillColor=color,
-        fillOpacity=0.9,
-        weight=3
-    ).add_to(territory_station_groups[territoire])
+    if territoire_original == 'RER' or station_type == 'RER':
+        # Pour les RER : carré coloré selon le territoire avec contour blanc
+        folium.Marker(
+            location=[row['Latitude'], row['Longitude']],
+            popup=folium.Popup(popup_html, max_width=320),
+            tooltip=folium.Tooltip(
+                f"<b>{short_name}</b><br>{territoire}<br><i>Cliquez pour plus d'infos</i>",
+                sticky=True
+            ),
+            icon=folium.DivIcon(
+                html=f'''
+                <div style="
+                    width: 16px; 
+                    height: 16px; 
+                    background-color: {color}; 
+                    border: 3px solid white;
+                    transform: translate(-50%, -50%);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                "></div>
+                ''',
+                icon_size=(22, 22),
+                icon_anchor=(11, 11)
+            )
+        ).add_to(rer_positions_group)
+    elif territoire_original == 'Bureau' or station_type == 'Bureau':
+        # Pour les Bureaux : losange coloré avec contour blanc
+        folium.Marker(
+            location=[row['Latitude'], row['Longitude']],
+            popup=folium.Popup(popup_html, max_width=320),
+            tooltip=folium.Tooltip(
+                f"<b>{short_name}</b><br>{territoire}<br><i>Cliquez pour plus d'infos</i>",
+                sticky=True
+            ),
+            icon=folium.DivIcon(
+                html=f'''
+                <div style="
+                    width: 16px; 
+                    height: 16px; 
+                    background-color: {color}; 
+                    border: 3px solid white;
+                    transform: translate(-50%, -50%) rotate(45deg);
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                "></div>
+                ''',
+                icon_size=(22, 22),
+                icon_anchor=(11, 11)
+            )
+        ).add_to(bureau_positions_group)
+    else:
+        # Pour les stations ICI : contour blanc plus visible
+        folium.CircleMarker(
+            location=[row['Latitude'], row['Longitude']],
+            radius=12,
+            color='white',
+            fill=True,
+            fillColor='white',
+            fillOpacity=1,
+            weight=0
+        ).add_to(all_stations_group)
+        
+        # Point coloré avec animation au survol
+        marker = folium.CircleMarker(
+            location=[row['Latitude'], row['Longitude']],
+            radius=10,
+            popup=folium.Popup(popup_html, max_width=320),
+            tooltip=folium.Tooltip(
+                f"<b>{short_name}</b><br>{territoire}<br><i>Cliquez pour plus d'infos</i>",
+                sticky=True
+            ),
+            color='white',
+            fill=True,
+            fillColor=color,
+            fillOpacity=0.9,
+            weight=3
+        )
+        marker.add_to(all_stations_group)
 
-# Ajouter tous les groupes de stations
-stations_group.add_to(m)
-for territoire in territory_station_groups:
-    territory_station_groups[territoire].add_to(m)
+# Ajouter les groupes de stations à la carte
+all_stations_group.add_to(m)
+rer_positions_group.add_to(m)
+bureau_positions_group.add_to(m)
+bureau_positions_group.add_to(m)
 
 print("   ✅ Stations interactives ajoutées (sans numéros)")
+
+# ============================================
+# AJOUTER LE MOTEUR DE RECHERCHE
+# ============================================
+
+# Ajouter le géocodeur pour rechercher des lieux
+geocoder = Geocoder(
+    collapsed=False,
+    position='bottomright',
+    placeholder='🔍 Rechercher une commune ou adresse...',
+    error_message='Lieu introuvable'
+)
+geocoder.add_to(m)
+
+# Ajouter un bouton de retour à la vue France
+reset_button_html = '''
+<div style="position: fixed; top: 130px; left: 10px; z-index: 1000;">
+    <button onclick="resetToFranceView()" 
+            style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); 
+                   color: white; border: none; padding: 10px 15px; 
+                   border-radius: 20px; font-size: 12px; font-weight: bold;
+                   box-shadow: 0 3px 10px rgba(0,0,0,0.2); 
+                   cursor: pointer; display: flex; align-items: center; gap: 5px;
+                   transition: all 0.3s ease;">
+        🇫🇷 <span>Vue France</span>
+    </button>
+</div>
+
+<script>
+// Variables globales pour la gestion de la vue
+var mapInstance = null;
+var searchMarker = null;
+
+// Fonction pour initialiser la référence à la carte
+function initMap() {
+    for (var key in window) {
+        if (key.startsWith('map_') && window[key]) {
+            mapInstance = window[key];
+            console.log('✅ Carte initialisée:', key);
+            return true;
+        }
+    }
+    return false;
+}
+
+// Fonction pour remettre la vue sur la France et supprimer le marqueur de recherche
+function resetToFranceView() {
+    if (!mapInstance) {
+        if (!initMap()) {
+            console.error('❌ Impossible de trouver la carte');
+            return;
+        }
+    }
+    
+    // Remettre le zoom et la position sur la France
+    mapInstance.setView([46.6, 2.5], 6);
+    
+    // Supprimer tous les marqueurs de recherche
+    mapInstance.eachLayer(function(layer) {
+        // Supprimer les marqueurs de géocodage (ils ont généralement une classe spécifique)
+        if (layer.options && (layer.options.className === 'leaflet-control-geocoder-icon' || 
+            layer._icon || (layer.options.icon && layer.options.icon.className))) {
+            // Si c'est un marqueur (pas nos stations)
+            if (!layer.options.fillColor) { // Nos stations ont fillColor, les marqueurs de recherche non
+                try {
+                    mapInstance.removeLayer(layer);
+                } catch(e) {
+                    // Ignore les erreurs de suppression
+                }
+            }
+        }
+    });
+    
+    // Alternative : supprimer via le geocoder si possible
+    try {
+        var geocoder = document.querySelector('.leaflet-control-geocoder');
+        if (geocoder && geocoder._geocoder) {
+            geocoder._geocoder._markers.forEach(function(marker) {
+                mapInstance.removeLayer(marker);
+            });
+            geocoder._geocoder._markers = [];
+        }
+    } catch(e) {
+        console.log('Méthode alternative de nettoyage non disponible');
+    }
+    
+    console.log('🇫🇷 Vue France restaurée');
+}
+
+// Initialiser au chargement
+setTimeout(function() {
+    initMap();
+}, 2000);
+
+// Observer les changements de zoom pour afficher/masquer le bouton
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (mapInstance) {
+            var resetButton = document.querySelector('button[onclick="resetToFranceView()"]');
+            if (resetButton) {
+                // Masquer le bouton au zoom initial
+                if (mapInstance.getZoom() <= 7) {
+                    resetButton.style.opacity = '0.5';
+                    resetButton.style.transform = 'scale(0.9)';
+                }
+                
+                // Écouter les changements de zoom
+                mapInstance.on('zoomend moveend', function() {
+                    if (mapInstance.getZoom() > 7 || 
+                        mapInstance.getCenter().lat < 41 || mapInstance.getCenter().lat > 52 ||
+                        mapInstance.getCenter().lng < -5 || mapInstance.getCenter().lng > 10) {
+                        // Afficher le bouton si on a zoomé ou déplacé
+                        resetButton.style.opacity = '1';
+                        resetButton.style.transform = 'scale(1)';
+                    } else {
+                        // Masquer le bouton si on est en vue France
+                        resetButton.style.opacity = '0.5';
+                        resetButton.style.transform = 'scale(0.9)';
+                    }
+                });
+            }
+        }
+    }, 3000);
+});
+</script>
+'''
+
+m.get_root().html.add_child(folium.Element(reset_button_html))
+
+print("   ✅ Moteur de recherche et bouton de retour ajoutés")
 
 # Contrôle des couches amélioré
 folium.LayerControl(collapsed=False).add_to(m)
 
-# Interface utilisateur avancée
-interface_html = '''
-<div style="position: fixed; bottom: 180px; right: 20px; z-index: 1000; 
-            background-color: white; padding: 15px; border-radius: 10px;
-            border: 2px solid #ccc; font-size: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            max-width: 280px;">"
-    <h4 style="margin: 0 0 15px 0; color: #333; text-align: center;">🎛️ Contrôles Carte</h4>
-    
-    <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-        <b>💡 Mode d'emploi:</b><br>
-        <small>
-        • <b>Survolez</b> les zones pour les mettre en surbrillance<br>
-        • <b>Cliquez</b> sur les stations pour les détails<br>
-        • <b>Utilisez</b> les couches pour filtrer<br>
-        • Les zones qui se <b>chevauchent</b> sont plus foncées
-        </small>
-    </div>
-    
-    <div style="margin-bottom: 15px;">
-        <b>🚀 Actions rapides:</b><br>
-        <button onclick="showOnlyShortRange()" style="margin: 2px; padding: 4px 8px; font-size: 10px; border: 1px solid #ddd; background: #e8f4f8; border-radius: 3px; cursor: pointer;">📍 Proximité (30min-1h)</button><br>
-        <button onclick="showOnlyLongRange()" style="margin: 2px; padding: 4px 8px; font-size: 10px; border: 1px solid #ddd; background: #f8e8e8; border-radius: 3px; cursor: pointer;">🌍 Étendue (1h30-2h)</button><br>
-        <button onclick="showAllRanges()" style="margin: 2px; padding: 4px 8px; font-size: 10px; border: 1px solid #ddd; background: #e8f8e8; border-radius: 3px; cursor: pointer;">🎯 Tout afficher</button>
-    </div>
-    
-    <div style="margin-bottom: 10px;">
-        <b>📊 Statistiques:</b><br>
-        <small>Stations: ''' + str(len(df)) + ''' • Territoires: ''' + str(len(COLORS)) + '''<br>
-        Isochrones: ''' + str(sum(len(iso_by_station[s]['30']) + len(iso_by_station[s]['60']) + len(iso_by_station[s]['90']) + len(iso_by_station[s]['120']) for s in iso_by_station)) + '''</small>
+
+
+# Bandeau de recherche et instructions
+search_banner_html = '''
+<div style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; padding: 12px 20px; border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 13px; text-align: center;
+            max-width: 600px; min-width: 400px;">
+    <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 15px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">🎯</span>
+            <strong>Carte Interactive ICI</strong>
+        </div>
+        <div style="font-size: 11px; opacity: 0.9;">
+            🔍 Utilisez la recherche en haut à gauche pour localiser une commune
+        </div>
+        <div style="font-size: 11px; opacity: 0.9;">
+            🖱️ Survolez les zones • 📍 Cliquez sur les stations
+        </div>
     </div>
 </div>
-
-<script>
-function showOnlyShortRange() {
-    // Masquer toutes les couches longue distance
-    var layerControl = window[Object.keys(window).find(key => key.includes('map'))].layerscontrol;
-    // Logic pour masquer 1h30 et 2h et afficher 30min et 1h
-    console.log('Affichage proximité activé');
-}
-
-function showOnlyLongRange() {
-    // Masquer les couches courte distance
-    console.log('Affichage étendue activé');
-}
-
-function showAllRanges() {
-    // Réafficher toutes les couches
-    console.log('Affichage complet activé');
-}
-</script>
 '''
 
 # Légende améliorée
@@ -414,14 +710,23 @@ legend_html = '''
     
     <div style="margin-bottom: 10px;">
         <b>🏢 Territoires:</b><br>
-        <span style="color: #e41a1c; font-size: 16px;">●</span> Nord-Est &nbsp;&nbsp;
-        <span style="color: #377eb8; font-size: 16px;">●</span> Nord-Ouest<br>
+        <span style="color: #e41a1c; font-size: 16px;">●</span> Nord Est &nbsp;&nbsp;
+        <span style="color: #377eb8; font-size: 16px;">●</span> Nord Ouest<br>
         <span style="color: #4daf4a; font-size: 16px;">●</span> Centre &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span style="color: #984ea3; font-size: 16px;">●</span> Centre-Est<br>
-        <span style="color: #ff7f00; font-size: 16px;">●</span> Centre-Sud-O &nbsp;
-        <span style="color: #f0e130; font-size: 16px;">●</span> Sud-Med<br>
+        <span style="color: #984ea3; font-size: 16px;">●</span> Est du Sud<br>
+        <span style="color: #ff7f00; font-size: 16px;">●</span> Sud Ouest &nbsp;
+        <span style="color: #f0e130; font-size: 16px;">●</span> Sud Med<br>
         <span style="color: #a65628; font-size: 16px;">●</span> Paris &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <span style="color: #999999; font-size: 16px;">●</span> RER
+    </div>
+    
+    <hr style="margin: 10px 0; border: 1px solid #eee;">
+    
+    <div>
+        <b>📍 Types de stations:</b><br>
+        <span style="color: #333; font-size: 16px;">●</span> Stations ICI (cercles)<br>
+        <span style="color: #333; font-size: 14px;">■</span> RER (carrés)<br>
+        <span style="color: #333; font-size: 14px;">◆</span> Bureaux (losanges)
     </div>
     
     <hr style="margin: 10px 0; border: 1px solid #eee;">
@@ -442,35 +747,175 @@ legend_html = '''
 </div>
 '''
 
-# CSS personnalisé pour les animations
+# CSS personnalisé pour les animations, survol amélioré et recherche
 custom_css = '''
 <style>
-.isochrone-30:hover, .isochrone-60:hover, .isochrone-90:hover, .isochrone-120:hover {
-    cursor: pointer;
-    filter: brightness(1.2);
-    transition: all 0.2s ease;
+/* Amélioration des effets de survol pour tous les polygones */
+.leaflet-interactive {
+    cursor: pointer !important;
+    transition: all 0.3s ease;
 }
 
+.leaflet-interactive:hover {
+    filter: brightness(1.3) saturate(1.2);
+    transform: scale(1.001);
+    z-index: 1000;
+}
+
+/* Stylisation du géocodeur */
+.leaflet-control-geocoder {
+    background: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    border: 2px solid #667eea !important;
+}
+
+.leaflet-control-geocoder-form input {
+    border: none !important;
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+    border-radius: 6px !important;
+    background: #f8f9fa !important;
+    width: 250px !important;
+}
+
+.leaflet-control-geocoder-form input:focus {
+    outline: none !important;
+    background: white !important;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2) !important;
+}
+
+.leaflet-control-geocoder-icon {
+    background: #667eea !important;
+    color: white !important;
+    border-radius: 4px !important;
+    width: 26px !important;
+    height: 26px !important;
+    margin: 2px !important;
+}
+
+.leaflet-control-geocoder-alternatives {
+    background: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    border: 1px solid #ddd !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+}
+
+.leaflet-control-geocoder-alternatives a {
+    padding: 8px 15px !important;
+    font-size: 13px !important;
+    border-bottom: 1px solid #eee !important;
+    transition: background 0.2s ease !important;
+}
+
+.leaflet-control-geocoder-alternatives a:hover {
+    background: #f0f2ff !important;
+    color: #667eea !important;
+}
+
+/* S'assurer que les boutons sont cliquables */
+button {
+    pointer-events: auto !important;
+    z-index: 1002 !important;
+}
+
+button:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Styling spécial pour le bouton de retour France */
+button[onclick="resetToFranceView()"]:hover {
+    background: linear-gradient(135deg, #ff5252, #d84315) !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 5px 15px rgba(255,107,107,0.4) !important;
+}
+
+button[onclick="resetToFranceView()"] span {
+    transition: all 0.3s ease;
+}
+
+button[onclick="resetToFranceView()"]:hover span {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Styling des popups */
 .leaflet-popup-content {
     border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .leaflet-popup-content h4 {
     border-bottom: 2px solid #eee;
     padding-bottom: 5px;
+    margin-bottom: 8px;
 }
 
+/* Amélioration des tooltips */
+.leaflet-tooltip {
+    background-color: rgba(0,0,0,0.8) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    font-weight: bold !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3) !important;
+    animation: tooltipFadeIn 0.2s ease-in;
+}
+
+@keyframes tooltipFadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Contrôle des couches */
 .leaflet-control-layers {
     max-height: 400px;
     overflow-y: auto;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-size: 13px;
+}
+
+.leaflet-control-layers label {
+    font-weight: normal;
+    margin: 2px 0;
+}
+
+/* Animation pour les stations */
+.leaflet-marker-icon {
+    transition: all 0.2s ease;
+}
+
+.leaflet-marker-icon:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+}
+
+/* Styles spéciaux pour différentes durées */
+path[stroke-dasharray=""] {
+    stroke-width: 3px;
+}
+
+path[stroke-dasharray="5, 5"] {
+    stroke-width: 2px;
+}
+
+path[stroke-dasharray="10, 5"] {
+    stroke-width: 2px;
+}
+
+path[stroke-dasharray="15, 5"] {
+    stroke-width: 1px;
 }
 </style>
 '''
 
 # Ajouter tous les éléments à la carte
-m.get_root().html.add_child(folium.Element(interface_html))
+m.get_root().html.add_child(folium.Element(search_banner_html))
 m.get_root().html.add_child(folium.Element(legend_html))
 m.get_root().html.add_child(folium.Element(custom_css))
 
