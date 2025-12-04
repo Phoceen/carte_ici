@@ -47,18 +47,46 @@ def create_highlight_style(base_color, duration):
     }}
     """
 
-# Lire les données
-df = pd.read_csv('all_stations_geocoded.csv', sep=';')
+# Lire les données avec les coordonnées Google Maps précises
+df = pd.read_csv('Clean_data/stations_updated_coordinates.csv', sep=';')
 
-# Lire les isochrones
-with open('isochrones_30min.geojson', 'r') as f:
-    iso_30 = json.load(f)
-with open('isochrones_60min.geojson', 'r') as f:
-    iso_60 = json.load(f)
-with open('isochrones_90min.geojson', 'r') as f:
-    iso_90 = json.load(f)
-with open('isochrones_120min.geojson', 'r') as f:
-    iso_120 = json.load(f)
+# Lire les isochrones depuis Clean_data - ICI, RER et Bureaux
+def load_all_isochrones():
+    """Charge et combine tous les isochrones (ICI + RER + Bureaux)"""
+    all_30 = {'type': 'FeatureCollection', 'features': []}
+    all_60 = {'type': 'FeatureCollection', 'features': []}
+    
+    # Charger les isochrones par type
+    types = ['stations', 'rer', 'bureaux']
+    for station_type in types:
+        try:
+            with open(f'Clean_data/isochrones_30min_{station_type}.geojson', 'r') as f:
+                data_30 = json.load(f)
+                all_30['features'].extend(data_30['features'])
+            
+            with open(f'Clean_data/isochrones_60min_{station_type}.geojson', 'r') as f:
+                data_60 = json.load(f)
+                all_60['features'].extend(data_60['features'])
+                
+            print(f"   ✅ Isochrones {station_type} chargés")
+        except FileNotFoundError:
+            print(f"   ⚠️  Isochrones {station_type} non trouvés")
+    
+    return all_30, all_60
+
+iso_30, iso_60 = load_all_isochrones()
+# Anciens isochrones 90min et 120min (stations uniquement)
+try:
+    with open('Clean_data/isochrones_90min_stations.geojson', 'r') as f:
+        iso_90 = json.load(f)
+    with open('Clean_data/isochrones_120min_stations.geojson', 'r') as f:
+        iso_120 = json.load(f)
+except FileNotFoundError:
+    # Fallback vers les anciens fichiers
+    with open('isochrones_90min.geojson', 'r') as f:
+        iso_90 = json.load(f)
+    with open('isochrones_120min.geojson', 'r') as f:
+        iso_120 = json.load(f)
 
 print("📍 Création de la carte avec contrôles par station...")
 
@@ -126,10 +154,10 @@ BUREAU_TERRITOIRE_MAPPING = {
 }
 
 STYLES = {
-    '30':  {'fillOpacity': 0.35, 'weight': 2, 'dashArray': None},
-    '60':  {'fillOpacity': 0.25, 'weight': 1.5, 'dashArray': '5, 5'},
-    '90':  {'fillOpacity': 0.20, 'weight': 1.5, 'dashArray': '10, 5'},
-    '120': {'fillOpacity': 0.15, 'weight': 1, 'dashArray': '15, 5'},
+    '30':  {'fillOpacity': 0.4, 'weight': 2, 'dashArray': None, 'zIndex': 400},
+    '60':  {'fillOpacity': 0.25, 'weight': 1.5, 'dashArray': '8, 4', 'zIndex': 300},
+    '90':  {'fillOpacity': 0.15, 'weight': 1.5, 'dashArray': '10, 5', 'zIndex': 200},
+    '120': {'fillOpacity': 0.1, 'weight': 1, 'dashArray': '15, 5', 'zIndex': 100},
 }
 
 DURATION_LABELS = {
@@ -150,7 +178,7 @@ def get_polygon_center(coords):
 def find_nearest_station(lat, lon, df):
     min_dist = float('inf')
     nearest = None
-    MAX_DISTANCE = 0.5  # Distance maximale en degrés (environ 50km)
+    MAX_DISTANCE = 2.0  # Distance maximale en degrés (environ 200km) pour gérer les grands isochrones
     
     for idx, row in df.iterrows():
         dist = math.sqrt((row['Latitude'] - lat)**2 + (row['Longitude'] - lon)**2)
@@ -207,8 +235,48 @@ for feature in iso_60['features']:
         feature['properties']['station'] = 'EXCLUDE'
         excluded_60 += 1
 
-if excluded_30 > 0 or excluded_60 > 0:
-    print(f"   ⚠️  {excluded_30} isochrones 30min et {excluded_60} isochrones 60min exclus (trop éloignés des stations)")
+print("   Association des isochrones 90min aux stations...")
+excluded_90 = 0
+for feature in iso_90['features']:
+    geom = feature['geometry']
+    if geom['type'] == 'Polygon':
+        coords = geom['coordinates'][0]
+    elif geom['type'] == 'MultiPolygon':
+        coords = geom['coordinates'][0][0]
+    else:
+        print(f"   Type de géométrie non supporté: {geom['type']}")
+        continue
+    
+    center_lat, center_lon = get_polygon_center(coords)
+    station = find_nearest_station(center_lat, center_lon, df)
+    if station:
+        feature['properties']['station'] = station
+    else:
+        feature['properties']['station'] = 'EXCLUDE'
+        excluded_90 += 1
+
+print("   Association des isochrones 120min aux stations...")
+excluded_120 = 0
+for feature in iso_120['features']:
+    geom = feature['geometry']
+    if geom['type'] == 'Polygon':
+        coords = geom['coordinates'][0]
+    elif geom['type'] == 'MultiPolygon':
+        coords = geom['coordinates'][0][0]
+    else:
+        print(f"   Type de géométrie non supporté: {geom['type']}")
+        continue
+    
+    center_lat, center_lon = get_polygon_center(coords)
+    station = find_nearest_station(center_lat, center_lon, df)
+    if station:
+        feature['properties']['station'] = station
+    else:
+        feature['properties']['station'] = 'EXCLUDE'
+        excluded_120 += 1
+
+if excluded_30 > 0 or excluded_60 > 0 or excluded_90 > 0 or excluded_120 > 0:
+    print(f"   ⚠️  {excluded_30} isochrones 30min, {excluded_60} isochrones 60min, {excluded_90} isochrones 90min et {excluded_120} isochrones 120min exclus (trop éloignés des stations)")
 
 # Créer des dictionnaires d'isochrones par station
 iso_by_station = {}
@@ -281,19 +349,9 @@ for idx, row in df_sorted.iterrows():
     territoire_original = row['Territoire']
     station_type = row['Type']
     
-    # Déterminer le territoire de rattachement selon le type
-    if territoire_original == 'RER' or station_type == 'RER':
-        territoire = RER_TERRITOIRE_MAPPING.get(station, 'RER')
-        if territoire == 'RER':  # Si pas trouvé dans le mapping, garder RER
-            color = COLORS.get('RER', '#999999')
-        else:
-            color = COLORS.get(territoire, '#999999')
-    elif territoire_original == 'Bureau' or station_type == 'Bureau':
-        territoire = BUREAU_TERRITOIRE_MAPPING.get(station, 'Bureau')
-        color = COLORS.get(territoire, '#999999')
-    else:
-        territoire = TERRITOIRE_MAPPING.get(territoire_original, territoire_original)
-        color = COLORS.get(territoire, '#999999')
+    # Utiliser le territoire depuis le CSV (colonne Territoire) pour tous les types de stations
+    territoire = TERRITOIRE_MAPPING.get(territoire_original, territoire_original)
+    color = COLORS.get(territoire, '#999999')
     
     short_name = station.replace('ici ', '').replace('RER ', '')
     
@@ -333,18 +391,20 @@ for idx, row in df_sorted.iterrows():
                 feature,
                 style_function=lambda x, c=color, d=duration: {
                     'fillColor': c,
-                    'color': '#000000',
+                    'color': '#222222',
                     'weight': STYLES[d]['weight'],
                     'fillOpacity': STYLES[d]['fillOpacity'],
                     'dashArray': STYLES[d]['dashArray'],
-                    'interactive': True
+                    'interactive': True,
+                    'className': f'isochrone-{d}min-{station.replace(" ", "-").replace("(", "").replace(")", "")}'
                 },
                 highlight_function=lambda x, c=color, d=duration: {
                     'fillColor': c,
                     'color': '#FF4444',
                     'weight': STYLES[d]['weight'] + 3,
                     'fillOpacity': min(STYLES[d]['fillOpacity'] + 0.4, 0.9),
-                    'dashArray': None
+                    'dashArray': None,
+                    'className': f'isochrone-highlight-{d}min'
                 },
                 tooltip=folium.Tooltip(
                     tooltip_text, 
@@ -362,11 +422,12 @@ for idx, row in df_sorted.iterrows():
             else:
                 geojson.add_to(ici_duration_groups[duration])
 
-# Ajouter tous les groupes à la carte
-for duration in ici_duration_groups:
-    ici_duration_groups[duration].add_to(m)
-    rer_duration_groups[duration].add_to(m)
-    bureau_duration_groups[duration].add_to(m)
+# Ajouter tous les groupes à la carte dans l'ordre correct (2h en premier pour être en arrière-plan)
+for duration in ['120', '90', '60', '30']:  # Ordre inverse : les derniers ajoutés sont au premier plan
+    if duration in ici_duration_groups:
+        ici_duration_groups[duration].add_to(m)
+        rer_duration_groups[duration].add_to(m)
+        bureau_duration_groups[duration].add_to(m)
 
 print("   ✅ Isochrones interactifs ajoutés")
 
@@ -388,19 +449,9 @@ for idx, row in df_sorted.iterrows():
     territoire_original = row['Territoire']
     station_type = row['Type']
     
-    # Déterminer le territoire de rattachement selon le type
-    if territoire_original == 'RER' or station_type == 'RER':
-        territoire = RER_TERRITOIRE_MAPPING.get(station, 'RER')
-        if territoire == 'RER':  # Si pas trouvé dans le mapping, garder RER
-            color = COLORS.get('RER', '#999999')
-        else:
-            color = COLORS.get(territoire, '#999999')
-    elif territoire_original == 'Bureau' or station_type == 'Bureau':
-        territoire = BUREAU_TERRITOIRE_MAPPING.get(station, 'Bureau')
-        color = COLORS.get(territoire, '#999999')
-    else:
-        territoire = TERRITOIRE_MAPPING.get(territoire_original, territoire_original)
-        color = COLORS.get(territoire, '#999999')
+    # Utiliser le territoire depuis le CSV (colonne Territoire) pour tous les types de stations
+    territoire = TERRITOIRE_MAPPING.get(territoire_original, territoire_original)
+    color = COLORS.get(territoire, '#999999')
     
     short_name = station.replace('ici ', '').replace('RER ', '')
     
@@ -414,7 +465,7 @@ for idx, row in df_sorted.iterrows():
             </div>
             <hr style="margin:10px 0">
             <div style="font-size:13px;">
-                <b>👤 Directeur:</b> {remove_phone(row['Contact_Principal'])}<br>
+                <b>👤 Directeur:</b> {remove_phone(row['Directeur.rice'])}<br>
                 <b>✏️ Réd. Chef:</b> {remove_phone(row['RedChef'])}<br>
                 <b>🔧 Réd. Chef Adj:</b> {remove_phone(row['RedChefAdj'])}<br>
                 <b>📺 Resp. Prog:</b> {remove_phone(row['RespProg'])}<br>
@@ -435,7 +486,7 @@ for idx, row in df_sorted.iterrows():
                 <b>📻 Type:</b> RER (Radio locale)
             </div>
             <hr style="margin:10px 0">
-            <b>📞 Contact:</b> {remove_phone(row['Contact_Principal'])}
+            <b>📞 Contact:</b> {remove_phone(row['Directeur.rice'])}
             <hr style="margin:10px 0">
             <div style="text-align:center; font-size:11px; color:#666;">
                 <i>💡 Survolez les zones colorées pour voir les isochrones</i>
@@ -451,7 +502,7 @@ for idx, row in df_sorted.iterrows():
                 <b>🏢 Type:</b> Bureau
             </div>
             <hr style="margin:10px 0">
-            <b>📞 Contact:</b> {remove_phone(row['Contact_Principal'])}
+            <b>📞 Contact:</b> {remove_phone(row['Directeur.rice'])}
             <hr style="margin:10px 0">
             <div style="text-align:center; font-size:11px; color:#666;">
                 <i>💡 Survolez les zones colorées pour voir les isochrones</i>
@@ -674,10 +725,145 @@ m.get_root().html.add_child(folium.Element(reset_button_html))
 
 print("   ✅ Moteur de recherche et bouton de retour ajoutés")
 
+# CSS personnalisé pour améliorer le contrôle des couches
+custom_css = '''
+<style>
+/* Améliorer la visibilité des différentes durées d'isochrones */
+.leaflet-interactive[class*="isochrone-30min"] {
+    z-index: 400 !important;
+}
+
+.leaflet-interactive[class*="isochrone-60min"] {
+    z-index: 300 !important;
+}
+
+.leaflet-interactive[class*="isochrone-90min"] {
+    z-index: 200 !important;
+}
+
+.leaflet-interactive[class*="isochrone-120min"] {
+    z-index: 100 !important;
+}
+
+/* Style pour les isochrones en surbrillance */
+.leaflet-interactive[class*="isochrone-highlight"] {
+    z-index: 500 !important;
+}
+
+/* Améliorer la lisibilité du contrôle des couches */
+.leaflet-control-layers {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+}
+
+.leaflet-control-layers-expanded {
+    padding: 10px 15px !important;
+}
+
+.leaflet-control-layers label {
+    margin: 5px 0 !important;
+    font-weight: 500 !important;
+}
+
+/* Séparer visuellement les groupes de couches */
+.leaflet-control-layers-list {
+    max-height: 600px;
+    overflow-y: auto;
+}
+</style>
+'''
+
+m.get_root().html.add_child(folium.Element(custom_css))
+
 # Contrôle des couches amélioré
 folium.LayerControl(collapsed=False).add_to(m)
 
+# JavaScript pour améliorer le contrôle des couches
+layer_control_js = '''
+<script>
+// Améliorer le contrôle des couches d'isochrones
+setTimeout(function() {
+    // S'assurer que les couches sont vraiment indépendantes
+    var map = window[Object.keys(window).find(key => key.startsWith('map_'))];
+    
+    if (map && map.eachLayer) {
+        // Fonction pour gérer l'affichage des couches
+        function updateLayerVisibility() {
+            map.eachLayer(function(layer) {
+                if (layer.feature && layer.feature.properties && layer.feature.properties.duration) {
+                    var duration = layer.feature.properties.duration;
+                    var stationType = 'ici'; // par défaut
+                    
+                    if (layer.feature.properties.station_name) {
+                        var stationName = layer.feature.properties.station_name;
+                        if (stationName.includes('RER')) {
+                            stationType = 'rer';
+                        } else if (stationName.includes('Bureau')) {
+                            stationType = 'bureau';
+                        }
+                    }
+                    
+                    // Vérifier si la couche correspondante est active
+                    var layerName = '';
+                    if (stationType === 'rer') {
+                        layerName = '📻 RER - ' + (duration === '60' ? '1h' : duration + 'min');
+                    } else if (stationType === 'bureau') {
+                        layerName = '🏢 Bureaux - ' + (duration === '60' ? '1h' : duration + 'min');
+                    } else {
+                        layerName = '🎯 Stations ICI - ' + (duration === '60' ? '1h' : duration + 'min');
+                    }
+                    
+                    // Trouver le contrôle correspondant
+                    var controlInputs = document.querySelectorAll('.leaflet-control-layers-selector');
+                    var isLayerVisible = false;
+                    
+                    controlInputs.forEach(function(input) {
+                        var label = input.nextSibling;
+                        if (label && label.textContent && label.textContent.trim() === layerName) {
+                            isLayerVisible = input.checked;
+                        }
+                    });
+                    
+                    // Appliquer la visibilité
+                    if (layer.setStyle) {
+                        if (!isLayerVisible) {
+                            layer.setStyle({opacity: 0, fillOpacity: 0});
+                        } else {
+                            var duration = layer.feature.properties.duration;
+                            var styles = {
+                                '30': {opacity: 1, fillOpacity: 0.4},
+                                '60': {opacity: 1, fillOpacity: 0.2},
+                                '90': {opacity: 1, fillOpacity: 0.15},
+                                '120': {opacity: 1, fillOpacity: 0.1}
+                            };
+                            if (styles[duration]) {
+                                layer.setStyle(styles[duration]);
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Écouter les changements dans le contrôle des couches
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('leaflet-control-layers-selector')) {
+                setTimeout(updateLayerVisibility, 100);
+            }
+        });
+        
+        // Application initiale
+        setTimeout(updateLayerVisibility, 1000);
+    }
+}, 2000);
 
+// Log pour debug
+console.log('Layer control script loaded');
+</script>
+'''
+
+# Layer control JavaScript supprimé pour revenir à la fonctionnalité standard
 
 # Bandeau de recherche et instructions
 search_banner_html = '''
@@ -799,7 +985,7 @@ custom_css = '''
     border-radius: 8px !important;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     border: 1px solid #ddd !important;
-    max-height: 200px !important;
+    max-height: 300px !important;
     overflow-y: auto !important;
 }
 
@@ -873,7 +1059,7 @@ button[onclick="resetToFranceView()"]:hover span {
 
 /* Contrôle des couches */
 .leaflet-control-layers {
-    max-height: 400px;
+    max-height: 650px;
     overflow-y: auto;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);

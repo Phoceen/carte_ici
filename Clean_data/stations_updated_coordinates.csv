@@ -1,0 +1,78 @@
+Nom_Station;Adresse;Type;Directeur.rice;RedChef;RedChefAdj;RespProg;RespTech;Latitude;Longitude;Territoire
+ici Alsace;4, rue Joseph Massol - 67000 STRASBOURG;ICI;Céline;Maud CZAJA;Magali FICHTER;Lionel;Frédéric;48.5852144;7.7553121;Nord-Est
+ici Armorique;14, av Jean Janvier - 35000 Rennes;ICI;Sophie;Céline GUETAZ;Loick GUELLEC;Gael;Laurent;48.1060394;-1.6733036;Nord-Ouest
+ici Auxerre;12, place Saint Amâtre 89002 AUXERRE;ICI;Valérie;Delphine MARTIN #REF!;Leni Flouvat (intérim);Eric;Maud;47.78975000000001;3.5649901;Centre-Est
+ici Azur;2, place Grimaldi 06012 Nice;ICI;;Caroline SAGLIONE (intérim);Violaine ILL;Julien;;43.69774109999999;7.265099699999999;Sud-Med
+ici Béarn-Bigorre;5, place Clémenceau - 64 000 Pau;ICI;Franck;Daniel CORSAND;Yannick DAMONT;Eric;Jérémy;43.2952502;-0.3692082;Centre-Sud-Ouest
+ici Belfort-Montbéliard;10, rue des capucins 90000 Belfort;ICI;Stéphane;Nicolas WILHELM;Nicolas JOLY;Vincent;Emmanuel;47.6360165;6.8557977;Nord-Est
+ici Berry;10, rue de la république - 36 000 Chateauroux;ICI;Christian;Carl DECHATRE;Gaëlle FONTENIT;Rodolphe;Olivier;46.8102086;1.6904362;Centre
+ici Besançon;2, place Granvelle 25027 BESANCON;ICI;Bruno;Marie-Coralie FOURNIER;Cédric LIETO;Thomas 0;Sarah;47.2354733;6.026932;Centre-Est
+ici Bourgogne;29, rue Guillaume Telle - 21000 Dijon;ICI;Laurent;Anne OGER-CANIER;Arnaud RACAPE;Raffaelo MARSEGLIA;David;47.32534589999999;5.0292186;Centre-Est
+ici Breizh Izel;155 boulevard de Creac’h Gwenn, 29000 Quimper;ICI;Gurvan;Baptiste SCHWEITZER;Typhaine MORIN;Chrystelle;Yann;47.9720721;-4.0960387;Nord-Ouest
+ici Champagne-Ardenne;28, Bd M. Joffre 51054 REIMS;ICI;Tony;Sylvie BASSAL;Soline DEMESTRE;Gilles;Fabien;49.258329;4.031696;Nord-Est
+ici Cotentin*;Rue Alexandre Piedagnel, 50100 Cherbourg-en-Cotentin;ICI;Jérôme;Juliette LEMEUNIER;Benoit MARTIN;Stéphanie;Paul;49.64206424528277; -1.612396532592541;Nord-Ouest
+ici Creuse;7 av de la république 23000 Guéret;ICI;Franky;Sophie PERETTI;Valérie MENUT;Xavier;Valentin;46.1698064;1.8720911;Centre
+ici Drôme Ardèche;Pôle Latour Maubourg-70 av. de Romans - 26000 VALENCE;ICI;Florence;Damien TRIOMPHE (intérim);;Vincent;Stéphane;44.9327373;4.9027296;Centre-Est
+ici Gard Lozère;10, boulevard des arènes - 30020 Nimes;ICI;Marie-Audrey;Tony SELLIEZ;Hervé SALLAFRANQUE;Félicien;Laurie;43.834352;4.3585603;Sud-Med
+ici Gascogne;13, place Jean Jaurès 40 005 Mont-de-Marsan;ICI;Grégoire;Eric BALLANGER;Renaud BIONDY-MAUGEY;Sabine;Olivier;43.88740019999999;-0.5005537;Centre-Sud-Ouest
+ici Gironde;91, rue Nuyens - 33100 Bordeaux;ICI;Jean-Marc;Yves MAUGUE;Stéphanie BROSSARD;Anthony;Christophe;44.8430547;-0.5594998;Centre-Sud-Ouest
+ici Hérault;474, allée de Montmorency -34 034 Montpellier;ICI;Paul;Typhaine MORIN;Mathias KERN;Bertrand FISSOT;Aubert;43.6096087;3.8888189;Sud-Med
+ici Isère;27, av Félix Viallet - 38000 Grenoble;ICI;Jean-Lou;Lionel CARIOU;Véronique PUEYO;Philippe;Alice;45.190812;5.7190219;Centre-Est
+ici La Rochelle;5, avenue Michel Crépeau - 17036 La Rochelle;ICI;Grégory;Mélanie DOMANGE;Eric LE BIHAN;Alain;Samuel;46.15352499999999;-1.1526834;Centre-Sud-Ouest
+ici Limousin;23, bld Gambetta 87 000 Limoges;ICI;Grégory;Jérôme EDANT;Valérie MOSNIER;Vincent;Jean-Baptiste;45.8276162;1.2579107;Centre
+ici Loire Océan;2 bis quai François Mitterand 44 000 Nantes;ICI;Philippe;Pascal ROCHE;Marion FERSING;Luc HUMBERT;Stéphane;47.2071841;-1.5555148;Nord-Ouest
+ici Lorraine Nord;5, rue d'Australie - 57000 Metz;ICI;Annaïg;Fanette HOURT;Bastien MUNCH;Patrick;Catherine;49.1122319;6.1750283;Nord-Est
+ici Maine;17, av. Pierre Mendès France 72 000 Le Mans;ICI;Patrick;Julie LE DUFF;Julien JEAN;#REF! #REF!;Julien;48.0057549;0.2001771;Nord-Ouest
+ici Mayenne;41, av. Robert Buron - 53 000 Laval;ICI;Delphine;Germain TREILLE;Martin COTTA;Eva;Clémence;48.0729029;-0.7639887999999999;Nord-Ouest
+ici Nord;507, av. du Président Hoover - 59000 Lille;ICI;Bertrand;Antoine BAREGE;Stéphane BARBEREAU;Sophie;Yohann;50.6269145;3.0797052;Nord-Est
+ici Normandie* - Calvados et Orne;12, rue Rosa Parks - 14000 Caen;ICI;Julien;Stéphanie BROSSARD;Philippe THOMAS;Pascal;Antoine;49.1785086;-0.3485604;Nord-Ouest
+ici Normandie* - Seine-Maritime et Eure;Hangar A - Quai Boisguilbert - 76 000 Rouen;ICI;Pierre;Raphaël TUAL;Charlotte COUTARD;Laurent;Sophie;49.4435158;1.0739459;Nord-Ouest
+ici Occitanie;78, allée Jean Jaurès - 31000 Toulouse;ICI;Bruce;Sandrine MORIN;Bénédicte DUPONT;Anthony;Vincent;43.60738130000001;1.452652;Sud-Med
+ici Orléans;5, place du Châtelet 45 000 Orléans;ICI;Philippe;Camille HUPPENOIRE;A VENIR;Bill;Abdelbasset;47.8984178;1.9058791;Centre
+ici Paris ;116 avenue du Président Kennedy, 75016 Paris;ICI;Sébastien;Nasser MADJI (chef des infos);;Elsa;Paul-Henri;48.85314260000001;2.2803673;Paris
+ici Pays Basque;46, allée Marines 64116 Bayonne;ICI;Ttotte;Odile FAURE;Bixente VRIGNON;Jean-Luc;Pascal;43.4985868;-1.4882088;Centre-Sud-Ouest
+ici Pays d'Auvergne;80, bld François Mitterrand 63 000 Clermont-Ferrand;ICI;Philippe;Olivier VIDAL;Emmanuel MOREAU;RABIA;Stéphane;45.771417;3.0841903;Centre
+ici Pays de Savoie;256, rue de la République - 73 000 Chambéry;ICI;Hervé;Jonathan LANDAIS;Tommy CATANEO;Thierry;Guillaume;45.5639107;5.9255284;Centre-Est
+ici Périgord;1 cours Saint Georges - 24 003 Périgeux;ICI;Henri;Marie-Sylvie PRUDHOMME;Charlotte JOUSSERAND;Cléo;Lionel;45.1801344;0.7248469;Centre-Sud-Ouest
+ici Picardie;2 rue Maréchal de Lattre de Tassigny - 80 000 Amiens;ICI;Henrique;Axelle LABBE;Pierre-Antoine LEFORT (intérim);Jérôme;Luca;49.892325;2.2921666;Nord-Est
+ici Poitou;313, av. de Nantes 86 000 Poitiers;ICI;Régis;Vincent HULIN;William GIRAUD;Nathalie;Marie-Ange;46.5929098;0.328186;Centre-Sud-Ouest
+ici Provence;560, av. Mozart - 13617 Aix en Provence;ICI;Eric;Nelly ASSENAT;Rémi INK;Fabien;Pascal;43.5251041;5.4406108;Sud-Med
+ici R.C.Fréquenza Mora;4, rue Favalelli - 20289 Bastia;ICI;Rose 0;Patrick ROSSI;Didier ARNOUX;Frédéric;Serge;42.6966496;9.4471787;Sud-Med
+ici Roussillon;24, av. du Général Leclerc 66 000 Perpignan;ICI;Christine;Stéphanie MORA;François DAVID;Maël;Stéphane;42.60052779999999;2.9673732;Sud-Med
+ici Saint Etienne Loire;5, rue Pablo Picasso - 42000 SAINT-ETIENNE;ICI;Hervé;Véronique NARBOUX;Mathilde MONTAGNON;Marie;Adrien;45.44972449999999;4.3872844;Centre-Est
+ici Sud Lorraine;21, Bd du Recteur Senn - 54042 NANCY;ICI;Nathalie;Clément LHUILLIER;Mohand CHIBANI;Julien;Nicolas;48.6825781;6.185567199999999;Nord-Est
+ici Touraine;40, rue James Watt 37 200 Tours;ICI;Yohann;David MALLE;Romain DEZEQUE;Eddy;Stéphane;47.3639835;0.680446;Centre
+ici Vaucluse;25, rue de la République - 84021 Avignon;ICI;Valerie;Camille LABROUSSE;Romain BERCHET;Christophe;Axel;43.9461244;4.8058683;Sud-Med
+RER ALÈS;Mairie de ALÈS;RER;LABASTROU Ludovic;;;;;44.1250889;4.077574;Sud Med
+RER ANGOULÈME;Mairie de ANGOULÈME;RER;MARSAT Pierre;;;;;45.6488766;0.1567288;Sud Ouest
+RER ANNECY;Mairie de ANNECY;RER;VIVION Richard;;;;;45.899247;6.129384;Est du Sud
+RER ARCACHON;Mairie de ARCACHON;RER;HISCOCK Stephane;;;;;44.6612588;-1.1705716;Sud Ouest
+RER ARRAS;Mairie de ARRAS;RER;LAMARRE VANESSA;;;;;50.2934211;2.7787176;Nord Est
+RER AUBENAS;Mairie de AUBENAS;RER;PLUVY PIERRE JEAN;;;;;44.6208798;4.3900426;Est du Sud
+RER BOURGES;Mairie de BOURGES;RER;BENOIT Michel;;;;;47.08023519017266;2.3989907172287364;Centre
+RER BOURGOIN;Mairie de BOURGOIN;RER;BALLANDRA Antoine;;;;;45.597108;5.27212;Est du Sud
+RER BREST;Mairie de BREST;RER;OLIVIER NICOLAS;;;;;48.3986344;-4.454643;Nord Ouest
+RER BÉZIERS;Mairie de BÉZIERS;RER;POCHER STEPHANE;;;;;43.3427915;3.2132624;Sud Med
+RER CALAIS;Mairie de CALAIS;RER;DARRIET Matthieu;;;;;50.9526259;1.8544302;Nord Est
+RER COLMAR;Mairie de COLMAR;RER;CHHUM Guillaume;;;;;48.0794357;7.358032399999999;Nord Est
+RER DAX;Mairie de DAX;RER;FERRIER Paul;;;;;43.70863809999999;-1.0518655;Sud Ouest
+RER EPINAL;Mairie de EPINAL;RER;COLIN Thierry;;;;;48.172402;6.449403;Nord Est
+RER EVREUX;Mairie de EVREUX;RER;PHILIPPOT Laurent;;;;;49.0270058;1.1515581;Nord Ouest
+RER LA ROCHE SUR YON;Mairie de LA ROCHE SUR YON;RER;TAPON YVES-RENE;;;;;46.66999240000001;-1.4278706;Nord Ouest
+RER LE HAVRE;Mairie de LE HAVRE;RER;BONTE Amélie;;;;;49.4945082;0.1079133;Nord Ouest
+RER MENDE;Mairie de MENDE;RER;MAKHLOUFI SAID;;;;;44.517743;3.5016431;Sud Med
+RER MONTBÉLIARD;Mairie de MONTBÉLIARD;RER;JAFFRELOT Dylan;;;;;47.5103829;6.7980828;Nord Est
+RER MULHOUSE;Mairie de MULHOUSE;RER;GENTHON Patrick;;;;;47.7505408;7.3358441;Nord Est
+RER NIORT;Mairie de Niort;RER;;;;;;46.3238369;-0.4648122;Sud Ouest
+RER SAINT-BRIEUC;Mairie de SAINT-BRIEUC;RER;MOISON JOHAN;;;;;48.51503719999999;-2.7632172;Nord Ouest
+RER SAINT-LÔ;Mairie de SAINT-LÔ;RER;;;;;;49.1160284;-1.0909195;Nord Ouest
+RER SAINT-NAZAIRE;Mairie de SAINT-NAZAIRE;RER;ROUSSEL Helene;;;;;47.280043798027535;-2.213723916940146;Nord Ouest
+RER SENS;Mairie de Sens;RER;Renaud Candelier;;;;;48.1988961;3.2827185;Est du Sud
+RER TOULON;Mairie de TOULON;RER;GLOTIN WININGER Sophie;;;;;43.1203083;5.9325079;Sud Med
+RER TULLE;Mairie de TULLE;RER;GRAZIANI Philippe;;;;;45.2658829;1.7720313;Centre
+RER VALENCIENNES;Mairie de VALENCIENNES;RER;PROUVOYEUR JULIEN;;;;;50.3577957;3.5238749;Nord Est
+RER VANNES;Mairie de VANNES;RER;COLAS Frederick;;;;;47.672956;-2.7643836;Nord Ouest
+RER VESOUL;Mairie de VESOUL;RER;FERNANDEZ JEAN FRANCOIS;;;;;47.61923;6.15456;Est du Sud
+Bureau AJACCIO;Résidence Les Pins, Av. Impératrice Eugénie, 20000 Ajaccio;Bureau;;;;;;41.9214861;8.7344498;Sud Med
+Bureau LYON;44 boulevard marius vivier merle;Bureau;;;;;;45.7593019;4.857728199999999;Est du Sud
+Bureau MARSEILLE;98 Rue de l'Évêché, 13002 Marseille;Bureau;;;;;;43.30194059999999;5.3672961;Sud Med

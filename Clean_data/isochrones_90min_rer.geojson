@@ -1,0 +1,14 @@
+{
+  "type": "FeatureCollection",
+  "features": [],
+  "metadata": {
+    "duration_minutes": 90,
+    "station_types": [
+      "RER"
+    ],
+    "generated_at": "2025-12-04T12:38:52.277469",
+    "total_stations": 30,
+    "success_count": 0,
+    "error_count": 30
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "FeatureCollection",
+  "features": [],
+  "metadata": {
+    "duration_minutes": 120,
+    "station_types": [
+      "Bureau"
+    ],
+    "generated_at": "2025-12-04T12:39:39.796815",
+    "total_stations": 3,
+    "success_count": 0,
+    "error_count": 3
+  }
+}
