@@ -9,9 +9,13 @@ import json
 import time
 import os
 from typing import Dict, List, Tuple
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configuration OpenRouteService
-ORS_API_KEY = "5b3ce3597851110001cf6248e95b9fff6a0e429497c64a86b89c1b8e"  # Remplacez par votre clé
+ORS_API_KEY = os.getenv('ORS_API_KEY')
 ORS_BASE_URL = "https://api.openrouteservice.org/v2/isochrones/driving-car"
 
 class IsochroneGenerator:

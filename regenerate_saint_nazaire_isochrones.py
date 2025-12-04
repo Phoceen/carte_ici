@@ -8,9 +8,14 @@ import pandas as pd
 import openrouteservice
 import json
 import time
+import os
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configuration
-ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImI0OTBkZjY4MTVmMzQwMjk4MzQwY2NiYTNiYjExMmZjIiwiaCI6Im11cm11cjY0In0='
+ORS_API_KEY = os.getenv('ORS_API_KEY')
 STATIONS_FILE = 'Clean_data/stations_updated_coordinates.csv'
 
 def regenerate_saint_nazaire_isochrones():

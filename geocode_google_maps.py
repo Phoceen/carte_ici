@@ -9,9 +9,14 @@ import requests
 import time
 import json
 from typing import Tuple, Optional
+from dotenv import load_dotenv
+import os
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # CONFIGURATION
-GOOGLE_MAPS_API_KEY = "AIzaSyACMXAnYifulTyyog5hVGdKn03OplZLo5U"  # Remplacez par votre clé API
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 INPUT_FILE = "Clean_data/stations_geocoded_clean.csv"
 OUTPUT_FILE = "stations_google_geocoded.csv"
 BACKUP_FILE = "stations_google_geocoded_backup.csv"
